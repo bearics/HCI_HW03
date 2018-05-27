@@ -1,665 +1,77 @@
 <html>
-<head>
-	<title>hyounglin 2014726001</title>
-	<style type="text/css">
-	body {
-		background: rgba(252, 208, 122, 1);
-		font-weight: 300;
-		margin: 0;
-	}
+    <head>
+        <title>hyounglin 2014726001</title>
+        <link href="./css/styles.css" rel="stylesheet"> </link>
+        <link href="./css/drawing.css" rel="stylesheet"> </link>
+        <!-- PLOT 그래프 그리기 외부 소스 사용  -->
+        <script src="https://cdn.plot.ly/plotly-1.35.2.min.js"></script>
+        <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans&subset=latin,greek" rel="stylesheet" type="text/css"> </link>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript"> </script>
+        <script src="./js/math.js" type="text/javascript "> </script>
+        <script async="" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML" type="text/javascript"> </script>
+        <script type="text/x-mathjax-config">
+                        MathJax.Hub.Config({
+        	"HTML-CSS": { scale: 75}
+        });
+        </script>
+		<script src="./js/calc.js" type="text/javascript"> </script>
+        
+    </head>
+        <!-- 1920*1080 >> 1280*720 -->
+    <body>
 
-	h1,
-	h2,
-	h3,
-	h4 {
-		font-weight: 900;
-		text-align: center;
-	}
-
-	.wrapper {
-		width: 100%;
-		display: flex;
-		justify-content: flex-start;
-		flex-direction: row;
-	}
-
-	.memo {
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-end;
-		justify-content: flex-start;
-	}
-
-	.calc {
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		justify-content: flex-end;
-	}
-
-	.top {
-		max-width: 400px;
-		width: 100%;
-		background: #FFF9F9;
-		color: #444;
-	}
-
-	.result {
-		box-sizing: border-box;
-		width: 100%;
-		height: 30px;
-		font-size: 16px;
-		margin: 0;
-		padding: 7px 10px 0px 10px;
-		text-align: left;
-		opacity: 0.6;
-		overflow: hidden;
-	}
-
-	.screen {
-		background: rgba(225, 218, 230, 1);
-		width: 400px;
-		height: 400px;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.screen {
-		outline: 1px solid rgba(136, 14, 79, 0.1);
-		background: rgba(225, 218, 230, 1);
-		width: 100%;
-		max-height: 250px;
-		border: 0;
-		font-size: 30px;
-		display: flex;
-		align-items: baseline;
-		justify-content: flex-start;
-
-		max-width: 400px;
-		color: #444;
-	}
-
-	.screen2 {
-		outline: 1px solid rgba(136, 14, 79, 0.1);
-		background: rgba(225, 218, 230, 1);
-		width: 100%;
-		max-height: 250px;
-		height: 200px;
-		border: 0;
-		font-size: 30px;
-		display: flex;
-		align-items: baseline;
-		justify-content: flex-start;
-
-		max-width: 400px;
-		color: #444;
-	}
-
-	.scrtitle {
-		height: 20px;
-		padding: 5 10 5 10;
-		background-color: rgba(254, 111, 118, 1);
-		text-align: left;
-		color: #eee;
-		font-size: 0.4em;
-	}
-
-
-	.hints {
-		opacity: 0.3;
-	}
-
-	.keyboard {
-		max-width: 400px;
-		width: 100%;
-		box-shadow: inset 10px -88px 160px 23px rgba(0, 0, 0, 0.8), 5px 35px 191px -43px rgba(255, 0, 255, 0.5);
-		margin-bottom: 50px;
-	}
-
-	.crow {
-		display: flex;
-		flex-direction: row;
-		align-items: stretch;
-		;
-		justify-content: space-around;
-		;
-		width: 100%;
-		min-height: 50px;
-		margin: auto;
-	}
-
-	.crow:last-child {
-		border-radius: 0px 0px 10px 10px;
-	}
-
-	.cb {
-		box-sizing: border-box;
-		width: 100%;
-		text-align: center;
-		padding: 5px;
-		background: rgba(255, 218, 230, 1);
-		color: #444;
-		cursor: pointer;
-		outline: 1px solid rgba(136, 14, 79, 0.1);
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: center;
-		box-shadow: none;
-		transition: all 0.2s;
-		-moz-user-select: none;
-		-khtml-user-select: none;
-		-webkit-user-select: none;
-		-o-user-select: none;
-	}
-
-	.cb:hover {
-		box-shadow: 10px 10px 18px -6px rgba(233, 30, 99, 0.5);
-		z-index: 1000;
-	}
-
-	.cb:active {
-		box-shadow: inset 10px 10px 18px -6px rgba(233, 30, 99, 0.5);
-	}
-
-	#screentext {
-		display: flex;
-		text-align: right;
-		justify-content: flex-end;
-		padding-right: 10px;
-		width:390;
-		font-size: 0.7em;
-		padding-right: 10px;
-	}
-
-	.animated {
-		position: relative;
-		top: 0;
-		animation: movetext1 .2s 1;
-	}
-
-	@keyframes movetext1 {
-		0% {
-			top: 100px;
-		}
-		100% {
-			top: 0px;
-		}
-	}
-
-	sup {
-		vertical-align: text-top;
-		font-size: 0.5em;
-	}
-
-	.inv {
-		display: none;
-	}
-
-	.lighter {
-		background-color: rgba(255, 235, 238, 1);
-		font-size: 1.2em;
-	}
-
-	.operands {
-		background-color: rgba(255, 155, 160, 1);
-		color: #eee;
-		font-size: 1.2em;
-	}
-
-	.page {
-		background-color: rgba(255, 175, 160, 1);
-		color: #eee;
-		font-size: 0.8em;
-	}
-
-	.favorite {
-		background-color: rgba(245, 205, 170, 1);
-		color: #000;
-		font-size: 0.8em;
-	}
-
-	.enter {
-		background-color: rgba(254, 111, 118, 1);
-		color: #eee;
-		font-size: 2em;
-	}
-
-	#latex {
-		width: 390px;
-		height: 80px;
-		padding-right: 10px;
-		margin-top: 10px;
-		margin-bottom: 10px;
-		border-radius: 5px;
-		display: inline-flex;
-		justify-content: flex-end;
-		align-items: center;
-		overflow: hidden;
-		font: 20px digital;		  
-	}
-
-	.paint {
-		width: 190px;
-		
-	}
-
-	.memory {
-		width: 180px;
-		padding: 10 10 10 10;
-		overflow: auto;
-	}
-
-	.mrow {
-		display: flex;
-		flex-direction: row;
-		align-items: start;
-		width: 180px;
-		min-height: 25px;
-	}
-
-	.mb {
-		box-sizing: border-box;
-		width: 100%;
-		height: 20px;
-		text-align: center;
-		padding: 5px;
-		background: rgba(255, 218, 230, 1);
-		color: #444;
-		cursor: pointer;
-		outline: 1px solid rgba(136, 14, 79, 0.1);
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: center;
-		box-shadow: none;
-		transition: all 0.2s;
-		-moz-user-select: none;
-		-khtml-user-select: none;
-		-webkit-user-select: none;
-		-o-user-select: none;
-		font-size: 0.5em;
-	}
-
-	.eq {
-		background: rgba(255, 208, 230, 1);
-	}
-
-	.mb:hover {
-		box-shadow: 10px 10px 18px -6px rgba(233, 30, 99, 0.5);
-		z-index: 1000;
-	}
-
-	.mb:active {
-		box-shadow: inset 10px 10px 18px -6px rgba(233, 30, 99, 0.5);
-	}
-
-	.paint {
-		padding: 5 5 5 5 ;
-	}
-	canvas {
-		background: #FFF;
-	}
-
-	input {
-		border: 0px;
-	}
-
-	.srow {
-		width: 100%;
-		display: flex;
-		align-items: baseline;
-		justify-content: flex-start;
-	}
-
-	.ob {
-		height: 8px;
-		margin-left: 20px;
-		background: rgba(255, 218, 230, 1);
-		color:#333;
-	}
-
-	.ob:hover {
-		box-shadow: 10px 10px 18px -6px rgba(233, 30, 99, 0.5);
-		z-index: 100;
-	}
-
-	.ob:active {
-		box-shadow: inset 10px 10px 18px -6px rgba(233, 30, 99, 0.5);
-	}
-
-
-
-</style>
-
-<!-- PLOT 그래프 그리기 외부 소스 사용  -->
-<script src="https://unpkg.com/mathjs@4.1.2/dist/math.min.js"></script>
-<script src="https://cdn.plot.ly/plotly-1.35.2.min.js"></script>
-
-
-<link href='https://fonts.googleapis.com/css?family=Open+Sans&subset=latin,greek' rel='stylesheet' type='text/css'>
-<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js' type='text/javascript'></script>
-<script src='math.js' type='text/javascript'></script>
-<script type="text/javascript" async
-src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>  
-
-<script type="text/x-mathjax-config">
-	MathJax.Hub.Config({
-	"HTML-CSS": { scale: 75}
-});
-</script>
-
-<script>
-	// 그래프 그리기
-	function drawGrap(ex) {
-		try {
-      // compile the expression once
-      var expression = ex;
-      var expr = math.compile(expression);
-
-      // evaluate the expression repeatedly for different values of x
-      var xValues = math.range(-10, 10, 0.5).toArray();
-      var yValues = xValues.map(function (x) {
-      	return expr.eval({x: x});
-      });
-
-      // render the plot using plotly
-      var trace1 = {
-      	x: xValues,
-      	y: yValues,
-      	type: 'scatter'
-      };
-      var data = [trace1];
-      Plotly.newPlot('plot', data);
-  }
-  catch (err) {
-
-  }
-}
-
-drawGrap();
-</script>
-
-<script type="text/javascript">
-	var trigFunc = ['sin', 'cos', 'tan'];
-	var page=0;
-	var favNum = 0;
-	var saveNum =0;
-
-	function contains(target, pattern){
-		var value = 0;
-		pattern.forEach(function(word){
-			value = value + target.includes(word);
-		});
-		return (value === 1)
-	}
-
-	String.prototype.format = function() {
-		a = this;
-		for (k in arguments) {
-			a = a.replace("{" + k + "}", arguments[k])
-		}
-		return a
-	}
-
-	$(document).ready(function(){
-		var parser = math.parser();
-
-		$('.srow .ob').click(
-		function() {
-			var ex = $('#screentext').text();
-			event.preventDefault();
-			drawGrap(ex);
-		})
-
-		var displayValue = '0';
-		$('#result').text(displayValue);
-		$('#latex').html('$$' + math.parse(displayValue).toTex() + '$$');
-
-		$('.page').click(
-			function() {
-				var page = $(this).attr('class');
-				if( $(this).text() == "기본")
-				{
-					$('.crow .ch').each(function(index, element){
-						$(this).text($(this).attr('dis1'));
-						$(this).attr('key', $(this).attr('key1'));
-					});
-					$('.page.pcb').html("비교연산자<br>벡터");
-					$('.page.pf').html("함수<br>변수");
-				}
-				else
-				{
-					if(page.lastIndexOf("pcb") >= 0 )
-					{
-						$('.crow .ch').each(function(index, element){
-							$(this).text($(this).attr('dis2'));
-							$(this).attr('key', $(this).attr('key2'));
-						});
-						$(this).text("기본");
-						$('.page.pf').html("함수<br>변수");
-					}
-					else if(page.lastIndexOf("pf") >= 0)
-					{
-						$('.crow .ch').each(function(index, element){
-							$(this).text($(this).attr('dis3'));
-							$(this).attr('key', $(this).attr('key3'));
-						});
-						$(this).text("기본");
-						$('.page.pcb').html("비교연산자<br>벡터");
-					}
-				}
-
-			}
-			);
-
-		$('.fbtn').click( // 즐겨찾기 추가 
-			function() {
-				var fb = $('#screentext').text();
-				$('.favorite').eq(favNum%4).attr("key", fb);
-				$('.favorite').eq(favNum%4).text(fb);
-				favNum += 1;
-			}
-			);
-
-		$('.key').each(function(index, key){	   
-			$(this).click(function(e){
-				if(displayValue == '0') displayValue = '';
-				var key = $(this).attr("key");
-				if(key == 'EV')
-				{
-					var eq = '<div class="mrow"><div class="mb save eq s' + saveNum + '">' + displayValue + '</div>';
-					try
-					{
-						if(contains(displayValue, trigFunc))
-						{  // 삼각 함수 예외 처리
-							displayValue = math.eval(displayValue).toString();
-						}
-						else
-						{
-							displayValue = parser.eval(displayValue).toString();
-						}
-						var tokens = displayValue.split(' ');
-						if(tokens[0] == 'function')
-						{
-							displayValue = tokens[0];
-						}
-						var res = '<div class="mb save res s' + saveNum + '">' + displayValue + '</div></div>';
-						$(".memory").append(eq+res);
-						saveNum+=1;
-						$('.save').click(  // 메모리 클릭 시 핸들러 등록
-							function() {
-								var mem;
-								if($('#screentext').text() == "0"  ||  $('#screentext').text() == $(this).text()){
-									mem = $(this).text();
-								}
-								else{
-									mem = $('#screentext').text() + $(this).text();
-								}
-								displayValue = mem;
-								$('#screentext').text(mem);
-							}
-							);
-						$('#screentext').text(displayValue);						 
-						displayValue = '0';
-					}
-					catch (e)
-					{
-						displayValue = '0';
-						if(displayValue != 'function')
-						{
-							$('#screentext').text(e);
-						}
-					}			   
-				}
-				else
-				{
-					if(key == 'CL')
-					{
-						displayValue = '0';
-						$('#screentext').text(displayValue);
-					}
-					else if(key == 'C')
-					{
-						displayValue = displayValue.slice(0,-1);
-						$('#screentext').text(displayValue);
-					}
-					else
-					{						
-						displayValue += key;
-						$('#screentext').text(displayValue);
-					}
-
-					var node = math.parse(displayValue);
-					var latex = node.toTex({parenthesis: 'keep', implicit: 'hide'});
-					var elem = MathJax.Hub.getAllJax('latex')[0];
-					MathJax.Hub.Queue(['Text', elem, latex]);					  
-				}
-
-				e.preventDefault()
-			})
-		})
-	})
-
-
-</script>
-
-<script type="text/javascript">
-	// canvas.js
-	window.onload = function(){
-		var canvas = document.getElementById("canvas");
-		draw(canvas);
-	}
-	function draw(canvas){
-		var ctx = canvas.getContext("2d");
-		ctx.moveTo(30, 100);
-		ctx.lineTo(80, 100);
-		ctx.stroke();
-	}
-
-	var pos = {
-		drawable: false,
-		x: -1,
-		y: -1
-	};
-	var canvas, ctx;
-
-	window.onload = function(){
-		canvas = document.getElementById("canvas");
-		ctx = canvas.getContext("2d");
-
-		canvas.addEventListener("mousedown", listener);
-		canvas.addEventListener("mousemove", listener);
-		canvas.addEventListener("mouseup", listener);
-		canvas.addEventListener("mouseout", listener);
-	}
-
-	function listener(event){
-		switch(event.type){
-			case "mousedown":
-			initDraw(event);
-			break;
-
-			case "mousemove":
-			if(pos.drawable)
-				draw(event);
-			break;
-
-			case "mouseout":
-			case "mouseup":
-			finishDraw();
-			break;
-		}
-	}
-	function initDraw(event){
-		ctx.beginPath();
-		pos.drawable = true;
-		var coors = getPosition(event);
-		pos.X = coors.X;
-		pos.Y = coors.Y;
-		ctx.moveTo(pos.X, pos.Y);
-	}
-
-	function draw(event){
-		var coors = getPosition(event);
-		ctx.lineTo(coors.X, coors.Y);
-		pos.X = coors.X;
-		pos.Y = coors.Y;
-		ctx.stroke();
-	}
-
-	function finishDraw(){
-		pos.drawable = false;
-		pos.X = -1;
-		pos.Y = -1;
-	}
-
-	function getPosition(event){
-		var x = event.pageX - canvas.offsetLeft;
-		var y = event.pageY - canvas.offsetTop;
-		return {X: x, Y: y};
-	}
-
-
-</script>
-
-</head>
-<!-- 1920*1080 >> 960*540 -->
-<body>
-	<h1>
-		2014726001 전형린 Calculator
-	</h1>
-	
 	<div class="wrapper">
 		<!-- 계산 결과 출력 부분 -->
 		<div class="memo">
-			<div class="screen" style="height: 50px;">
-				<div class="scrtitle">입력된 수식</div>
-				<div id="screentext">0</div>
-			</div>
-			<div class="screen" style="height: 100px;">
-				<div class="srow">
-					<div class="scrtitle">정리된 수식</div>
-					<div class="scrtitle ob" style="font-size: 0.25em; padding-left: 5px; vertical-align: text-top;">그림 보기</div>
-				</div>
-				<div id="latex">0</div>
-			</div>
-			<div class="screen2" style="height: 250px;">
-				<div class="screen"  style="height: 250px;width: 200px;">
+			<div class="screen" style="height: 720px;">
+				<div class="screen"  style="height: 360px; width: 640px;">
 					<!-- <div class="scrtitle">연습장</div> -->
 					<div class="srow">
 						<div class="scrtitle">연습장</div>
-						<div style="font-size: 0.25em; padding-left: 5px; vertical-align: text-top;">아래 백지에 마우스로<br>그림 그리기 가능</div>
+						<div style="font-size: 0.5em; padding-left: 20px; vertical-align: middle;">아래 백지에 마우스로 그림 그리기 가능</div>
 					</div>
+			        <div class="srow" id="paintbg">
+			            <div id="canvasarea">
+			                <canvas height="270" id="myCanvas" width="640">
+			                    Canvas not supporeted in IE 8 and earlier versions srry
+			                </canvas>
+			            </div>
+			        </div>
+			        <div class="srow" id="space">
+			            <div id="colorpanel">
+			                <div id="contain">
+			                    <div class="palette red" id="red" onclick="changeColors(this)">
+			                    </div>
+			                    <div class="palette orange" id="orange" onclick="changeColors(this)">
+			                    </div>
+			                    <div class="palette green" id="green" onclick="changeColors(this)">
+			                    </div>
+			                    <div class="palette indigo" id="indigo" onclick="changeColors(this)">
+			                    </div>
+			                    <div class="palette black" id="black" onclick="changeColors(this)">
+			                    </div>
+			                    <div class="palette white" id="erase" onclick="changeColors(this)">
+			                    </div>
+			                <form>
+			                    <input id="myRange" max="50" min="1" name="amountRange" onclick="lineWidthRange()" oninput="this.form.amountInput.value=this.value" size="3" value="1"/>
+			                </form>
+			                			                <button class="button" onclick="erase()">
+			                    CLEAR
+			                </button>
+			                <button class="button">
+			                    <a download="my-file-name.png" href="#" id="dwnld">
+			                        SAVE
+			                    </a>
+			                </button>
+			                </div>
 
-					<div class="paint">
-						<canvas id="canvas" width="190" height="210"></canvas>
-					</div>
+
+			            </div>
+			        </div>
+        		<script src="./js/drawing.js" type="text/javascript"> </script>
 				</div>
-				<div class="screen" style="height: 250px; width: 200px;">
+				<div class="screen" style="height: 360px; width: 640px;">
 					<div class="scrtitle">메모리</div>
 					<div class="memory">
 						<div class="mrow">
@@ -672,6 +84,19 @@ drawGrap();
 		</div>
 		<!-- 계산기 부분 -->
 		<div class="calc">
+			<div class="screen" style="height: 120px; width: 640px;">
+				<div class="scrtitle">입력된 수식</div>
+				<div id="screentext">0</div>
+			</div>
+			<div class="screen" style="height: 120px; width: 640px;">
+				<div class="srow">
+					<div class="scrtitle">정리된 수식</div>
+					<div class="scrtitle ob" id="myBtn" style="font-size: 0.25em; padding-left: 5px; vertical-align: text-top;">그래프 보기</div>
+					<div class="scrtitle ob" id="graph" style="font-size: 0.25em; padding-left: 5px; vertical-align: text-top;">그래프 추가</div>
+					<div class="info" id="graphInfo" style="font-size: 0.25em; padding-left: 5px; vertical-align: text-top;"></div>
+				</div>
+				<div id="latex">0</div>
+			</div>
 			<div class="keyboard">
 				<div class="crow">
 					<div class="cb key ch" key="e" key1="e"  key2="[" key3="x" dis1="e" dis2="[" dis3="x">e</div>
@@ -682,10 +107,10 @@ drawGrap();
 				</div>
 				<div class="crow">
 					<div class="cb key ch" key="^"  key1="^" key2="]" key3="y" dis1="^" dis2="]" dis3="y">^</div>
-					<div class="cb key ch" key="^(2)"" key1="^(2)" key2="det([" key3="g(" dis1="x²" dis2="det" dis3="g">x²</div>
-					<div class="cb key ch" key="log10("" key1="log10(" key2="==" key3="asin(" dis1="log" dis2="==" dis3="asin">log</div>
-					<div class="cb key ch" key="ln("" key1="ln(" key2="!=" key3="acos(" dis1="ln" dis2="!=" dis3="acos">ln</div>
-					<div class="cb key ch" key="sqrt("" key1="sqrt(" key2=">=" key3="atan(" dis1="√" dis2=">=" dis3="atan">√</div>
+					<div class="cb key ch" key="^(2)" key1="^(2)" key2="det([" key3="g(" dis1="x²" dis2="det" dis3="g">x²</div>
+					<div class="cb key ch" key="log10(" key1="log10(" key2="==" key3="asin(" dis1="log" dis2="==" dis3="asin">log</div>
+					<div class="cb key ch" key="ln(" key1="ln(" key2="!=" key3="acos(" dis1="ln" dis2="!=" dis3="acos">ln</div>
+					<div class="cb key ch" key="sqrt(" key1="sqrt(" key2=">=" key3="atan(" dis1="√" dis2=">=" dis3="atan">√</div>
 				</div>
 				<div class="crow">
 					<div class="cb key ch" key="!" key1="!" key2="," key3="z" dis1="n!" dis2="," dis3="z">n!</div>
@@ -732,11 +157,36 @@ drawGrap();
 				</div>
 			</div>
 		</div>
-
 	</div>
+<!-- Modal content -->
+<!-- Trigger/Open The Modal -->
 
-	<div id="plot"></div>
+<!-- The Modal -->
+<div id="myModal" class="modal">
 
+  <!-- Modal content -->
+  <div class="modal-content" style="display: block;">
+    <span class="close"  style="display: block;">&times;</span>
+    <div class="popup" style="display: block;">
+    	<div id="plot" style="display: block;"></div>
+    	<div id="settingbox">
+			<div style="font-size: 10;">상단에 '집'모양 버튼을 누르면 그래프 이름이 나오며, 그래프를 더블 클릭하면 사라집니다.</br> </div>
+    		레이아웃 설정 : 
+    		<input type="text" placeholder="범위 입력(기본값 : 10)" id="range"/>
+    		<input type="text"  placeholder="간격 입력(기본값 : 0.5)" id="repeat"/>
+    		<input type="button" id="changeRange" value="변경"/>
+    		</br>
+    		그래프 설정 :
+    		<select id="trace">  
+			</select>
+			<input type="text"  placeholder="그래프 굵기 입력(기본값 : 2)" style="width: 200px;" id="boldSize"/>
+    		<input type="button" id="beautifyGrap" style="width: 100px;" value="그래프 수정"/>
+    	</div>
+    </div>
+  </div>
 
+</div>
+		<script src="./js/overlay.js" type="text/javascript"> </script>	
 </body>
+
 </html>
